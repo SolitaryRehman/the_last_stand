@@ -56,3 +56,5 @@ Click Import Project
 Select the project folder
 
 And press Run.
+
+Readme Check.

@@ -1,7 +1,7 @@
 extends Node2D
 
-@onready var player_1: CharacterBody2D = $"../Player1"
-@onready var player_2: CharacterBody2D = $"../player2"
+@onready var player_1: CharacterBody2D = $"../player_1"
+@onready var player_2: CharacterBody2D = $"../player_2"
 
 @onready var camera_2d: Camera2D = $Camera2D
 
