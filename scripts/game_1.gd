@@ -1,7 +1,7 @@
 extends Node2D
 
-@onready var player_1: CharacterBody2D = $Player1
-@onready var player_2: CharacterBody2D = $player2
+@onready var player_1: CharacterBody2D = $player_1
+@onready var player_2: CharacterBody2D = $player_2
 
 @onready var health_bar_player_1: ProgressBar = $UI/health_bar_player_1
 @onready var health_bar_player_2: ProgressBar = $UI/health_bar_player_2
@@ -51,9 +51,9 @@ func _process(delta: float) -> void:
 
 func on_player_health_changed(new_health: int, character_id: String):
 	
-	if character_id == player_1.name:
+	if character_id == player_1.character_name:
 		health_bar_player_1.value = new_health
-	elif character_id == player_2.name:
+	elif character_id == player_2.character_name:
 		health_bar_player_2.value = new_health
 	
 

@@ -4,7 +4,10 @@ const SPEED = 400.0
 const JUMP_VELOCITY = -650.0
 
 @onready var animated_sprite: AnimatedSprite2D = $facing_container/AnimatedSprite2D
-@onready var hurtbox_area: Hurtbox = $facing_container/hurtbox
+
+@onready var hurtbox_standing_area: Hurtbox = $facing_container/hurtbox_standing
+@onready var hurtbox_crouching_area: Hurtbox = $facing_container/hurtbox_crouching
+
 @onready var hitbox_area: Hitbox = $facing_container/hitbox
 
 @onready var facing_container: Node2D = $facing_container
@@ -13,7 +16,7 @@ const JUMP_VELOCITY = -650.0
 
 signal character_died(character_id: String)
 signal health_changed(new_health: int, character_id: String)
-
+	
 # ================================
 # PLAYER STATE
 # ================================
@@ -44,8 +47,10 @@ const BUFFER_DURATION = 0.3 # Inputs expire after 0.3 seconds
 var buffer_timer: float = 0.0
 
 var is_blocking: bool = false
+var is_blocking_hit = false
 
 var counter_window_timer: Timer = Timer.new() # Add as child node
+var is_counter_window_active: bool = false
 
 
 # ====== DEFINING COMBO SEQUENCES ======
@@ -66,8 +71,9 @@ func _ready():
 	add_child(counter_window_timer)
 	counter_window_timer.one_shot = true
 	counter_window_timer.timeout.connect(func(): is_counter_window_active = false)
-
-var is_counter_window_active: bool = false
+	
+	hurtbox_standing_area.area_entered.connect(_on_hurtbox_standing_area_entered)
+	hurtbox_crouching_area.area_entered.connect(_on_hurtbox_crouching_area_entered)
 
 # ============================================================
 # MAIN PHYSICS PROCESS
@@ -150,6 +156,7 @@ func _physics_process(delta: float) -> void:
 	# Handle stun timer
 	if is_stunned:
 		stun_timer -= delta
+		
 		if stun_timer <= 0:
 			is_stunned = false
 		else:
@@ -166,15 +173,8 @@ func _physics_process(delta: float) -> void:
 		_handle_animation()
 	
 	# Handle block input
-	if Input.is_action_pressed("p2_block_standing") and not is_attacking and not is_stunned:
-		is_blocking = true
-		
-		if is_crouching:
-			animated_sprite.play("p2_block_crouch")
-		else :
-			animated_sprite.play("p2_block_standing")
-	else:
-		is_blocking = false # Ensure block state is reset when button is released
+	_handle_block()
+	
 	
 	# Check for counterattack input during counter window
 	if is_counter_window_active and Input.is_action_just_pressed("p2_attack_4_simple"):
@@ -275,18 +275,36 @@ func _handle_crouch(crouch_pressed):
 	elif not crouch_pressed and is_crouching and not is_attacking:
 		_start_crouch_up()
 		return
+	
+	# ALWAYS keep crouching hurtbox ON
+	if is_crouching:
+		hurtbox_standing_area.get_node("CollisionShape2D").disabled = true
+		hurtbox_crouching_area.get_node("CollisionShape2D").disabled = false
+	else:
+		hurtbox_standing_area.get_node("CollisionShape2D").disabled = false
+		hurtbox_crouching_area.get_node("CollisionShape2D").disabled = true
+	
 
 
 func _start_crouch_down():
+	
 	crouch_state = "down"
 	is_crouching = true
 	velocity.x = 0
+	
 	animated_sprite.play("p2_crouch_down")
+	
+	hurtbox_standing_area.get_node("CollisionShape2D").disabled = true
+	hurtbox_crouching_area.get_node("CollisionShape2D").disabled = false
 
 
 func _start_crouch_up():
+	
 	crouch_state = "up"
 	animated_sprite.play("p2_crouch_up")
+	
+	hurtbox_standing_area.get_node("CollisionShape2D").disabled = false
+	hurtbox_crouching_area.get_node("CollisionShape2D").disabled = true
 
 
 # ============================================================
@@ -366,7 +384,7 @@ func _handle_attack_input():
 # ============================================================
 func _handle_animation():
 
-	if is_attacking:
+	if is_attacking or is_stunned:
 		return
 
 	if is_on_floor():
@@ -499,7 +517,7 @@ func take_damage(amount: int, hit_position: Vector2):
 	print("Character took ", amount, " damage. Health: ", health) # For debugging
 	
 	# ADDED an @export var character_name: String = "Player1" to Character.gd
-	health_changed.emit(health, name)
+	health_changed.emit(health, character_name)
 	
 	# HORIZONTAL KNOCKBACK OPPOSITE ATTACKER
 	var knockback_direction_difference = global_position.x - hit_position.x
@@ -528,7 +546,10 @@ func take_damage(amount: int, hit_position: Vector2):
 		is_attacking = false
 		
 		if play_getting_hit_animation:
-			animated_sprite.play("p2_get_hit")
+			if is_crouching:
+				animated_sprite.play("p2_get_hit_crouch")
+			else:
+				animated_sprite.play("p2_get_hit")
 		
 	else:
 		# If blocking, return to blocking idle animation
@@ -541,7 +562,7 @@ func take_damage(amount: int, hit_position: Vector2):
 	# Death
 	if health <= 0:
 		animated_sprite.play("p2_defeat")
-		emit_signal("character_died", name)
+		emit_signal("character_died", character_name)
 		die()
 	
 
@@ -549,17 +570,29 @@ func take_damage(amount: int, hit_position: Vector2):
 func die():
 	print("PLAYER DEAD")
 
-func _on_hurtbox_area_entered(area: Area2D) -> void:
+func _on_hurtbox_standing_area_entered(area: Area2D) -> void:
 	
 	# We can identify hitboxes by checking their collision layer or by adding them to a group.
-	if area.is_in_group("hitbox"):
-		
-		# Ensure the hitbox belongs to an opponent, not self
-		if area.owner != self:
-			
-			# Pass hitbox position for knockback direction
-			take_damage(damage_amount, area.global_position) 
+	if area.is_in_group("hitbox") and area.owner != self:
+		if is_blocking:
+			take_damage(int(damage_amount), area.global_position) # apply small damage
+			_on_blocked_hit(area.global_position) # play block animation
+		else:
+			take_damage(damage_amount, area.global_position)
 	
+
+
+func _on_hurtbox_crouching_area_entered(area: Area2D) -> void:
+	
+	# We can identify hitboxes by checking their collision layer or by adding them to a group.
+	if area.is_in_group("hitbox") and area.owner != self:
+		if is_blocking:
+			take_damage(int(damage_amount), area.global_position) # apply small damage
+			_on_blocked_hit(area.global_position) # play block animation
+		else:
+			take_damage(damage_amount, area.global_position)
+	
+
 
 func reset_stats():
 	health = max_health
@@ -567,4 +600,66 @@ func reset_stats():
 	is_attacking = false
 	is_blocking = false
 	velocity = Vector2.ZERO
-	health_changed.emit(health, name)
+	health_changed.emit(health, character_name)
+
+func _handle_block():
+	
+	if Input.is_action_pressed("p2_block_standing") and is_on_floor() and not is_attacking:
+		
+		if not is_blocking:
+			is_blocking = true
+			
+			if is_crouching:
+				animated_sprite.play("p2_block_crouch_start")
+			else:
+				animated_sprite.play("p2_block_standing_start")
+			
+		else:
+			# Already blocking, maintain idle block
+			if is_crouching:
+				animated_sprite.play("p2_block_crouch_idle")
+			else:
+				animated_sprite.play("p2_block_standing_idle")
+				
+	else:
+		
+		if is_blocking:
+			is_blocking = false
+			
+			if is_crouching:
+				animated_sprite.play("p2_block_crouch_release")
+			else:
+				animated_sprite.play("p2_block_standing_release")
+
+
+
+func _on_blocked_hit(hit_position: Vector2):
+	
+	# Prevent multiple triggers in the same hit
+	if is_blocking_hit:
+		return
+	 
+	is_blocking_hit = true
+	
+	# Play block-hit animation
+	if is_crouching:
+		animated_sprite.play("p2_block_crouch_hit")
+	else:
+		animated_sprite.play("p2_block_standing_hit")
+	
+	# Optional: small knockback for realism
+	var knockback_direction = sign(global_position.x - hit_position.x)
+	velocity.x = knockback_direction * 50  # small push
+	
+	# Open counter window
+	is_counter_window_active = true
+	counter_window_timer.start(0.2)
+	
+	# Return to block idle after animation finishes
+	animated_sprite.animation_finished.connect(func():
+		if is_crouching:
+			animated_sprite.play("p2_block_crouch_idle")
+		else:
+			animated_sprite.play("p2_block_standing_idle")
+		is_blocking_hit = false
+	, CONNECT_ONE_SHOT)

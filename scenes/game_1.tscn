@@ -649,11 +649,11 @@ _data = {
 [node name="GAME 1" type="Node2D"]
 script = ExtResource("1_6xfxu")
 
-[node name="Player1" parent="." instance=ExtResource("1_8lody")]
+[node name="player_1" parent="." instance=ExtResource("1_8lody")]
 position = Vector2(492, -88)
 scale = Vector2(4, 4)
 
-[node name="player2" parent="." instance=ExtResource("9_luixn")]
+[node name="player_2" parent="." instance=ExtResource("9_luixn")]
 z_index = 5
 position = Vector2(182.00012, 10.9999695)
 scale = Vector2(1.25, 1.25)
@@ -846,5 +846,7 @@ position = Vector2(274, -107)
 wait_time = 60.0
 one_shot = true
 
+[connection signal="health_changed" from="player_2" to="." method="_on_player_health_changed"]
+[connection signal="health_changed" from="player_2" to="." method="_on_player_2_health_changed"]
 [connection signal="timeout" from="round_timer" to="." method="_on_timer_timeout"]
 [connection signal="timeout" from="round_timer" to="." method="_on_round_timer_timeout"]
