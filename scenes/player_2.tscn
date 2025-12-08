@@ -1572,10 +1572,11 @@ health = NodePath("../../health_system")
 shape = SubResource("CapsuleShape2D_l6tho")
 debug_color = Color(0.6214429, 0.52642566, 0.25948438, 0.41960785)
 
-[node name="hurtbox_crouching" type="Area2D" parent="facing_container"]
+[node name="hurtbox_crouching" type="Area2D" parent="facing_container" node_paths=PackedStringArray("health")]
 position = Vector2(12, 6)
 collision_mask = 2
 script = ExtResource("5_v7tvf")
+health = NodePath("../../health_system")
 metadata/_custom_type_script = "uid://bhvmj101wvbe8"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="facing_container/hurtbox_crouching"]

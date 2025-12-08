@@ -1384,7 +1384,7 @@ health = NodePath("../../health_system")
 shape = SubResource("CapsuleShape2D_qhqgy")
 debug_color = Color(0.65462524, 0.5068231, 0.30220023, 0.41960785)
 
-[node name="hitbox" parent="facing_container" groups=["hitbox"] instance=ExtResource("5_qlg0r")]
+[node name="hitbox" parent="facing_container" groups=["hitbox_punch"] instance=ExtResource("5_qlg0r")]
 position = Vector2(14, 0)
 collision_layer = 2
 

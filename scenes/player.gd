@@ -447,7 +447,7 @@ func die():
 func _on_hurtbox_area_entered(area: Area2D) -> void:
 	
 	# We can identify hitboxes by checking their collision layer or by adding them to a group.
-	if area.is_in_group("hitbox"):
+	if area.is_in_group("hitbox_punch"):
 		
 		# Ensure the hitbox belongs to an opponent, not self
 		if area.owner != self:
