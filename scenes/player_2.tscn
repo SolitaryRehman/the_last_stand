@@ -1604,5 +1604,4 @@ disabled = true
 
 [connection signal="health_depleted" from="health_system" to="." method="_on_health_system_health_depleted"]
 [connection signal="area_entered" from="facing_container/hurtbox_standing" to="." method="_on_hurtbox_standing_area_entered"]
-[connection signal="area_entered" from="facing_container/hurtbox_standing" to="." method="_on_hurtbox_area_entered"]
 [connection signal="area_entered" from="facing_container/hurtbox_crouching" to="." method="_on_hurtbox_crouching_area_entered"]
