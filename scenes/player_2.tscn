@@ -1561,7 +1561,7 @@ shape = SubResource("CapsuleShape2D_l6tho")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="facing_container"]
 position = Vector2(0, -5)
 sprite_frames = SubResource("SpriteFrames_povjg")
-animation = &"p2_attack_crouch_5_simple"
+animation = &"p2_knockdown_get_up"
 autoplay = "p2_idle"
 
 [node name="hurtbox_standing" parent="facing_container" node_paths=PackedStringArray("health") instance=ExtResource("5_0mr0g")]
