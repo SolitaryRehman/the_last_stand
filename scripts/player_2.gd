@@ -72,8 +72,7 @@ func _ready():
 	counter_window_timer.one_shot = true
 	counter_window_timer.timeout.connect(func(): is_counter_window_active = false)
 	
-	hurtbox_standing_area.area_entered.connect(_on_hurtbox_standing_area_entered)
-	hurtbox_crouching_area.area_entered.connect(_on_hurtbox_crouching_area_entered)
+
 
 # ============================================================
 # MAIN PHYSICS PROCESS
