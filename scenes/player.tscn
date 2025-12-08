@@ -1395,6 +1395,7 @@ shape = SubResource("CapsuleShape2D_qhqgy")
 debug_color = Color(0.65462524, 0.5068231, 0.30220023, 0.41960785)
 
 [node name="hurtbox_crouching" type="Area2D" parent="facing_container"]
+collision_mask = 2
 script = ExtResource("5_fjrip")
 metadata/_custom_type_script = "uid://bhvmj101wvbe8"
 
@@ -1412,6 +1413,7 @@ shape = SubResource("CapsuleShape2D_qhqgy")
 disabled = true
 
 [node name="hitbox_kick" type="Area2D" parent="facing_container" groups=["hitbox_kick"]]
+collision_layer = 2
 script = ExtResource("7_smehm")
 metadata/_custom_type_script = "uid://fed4ogu6k1y6"
 
@@ -1420,4 +1422,5 @@ position = Vector2(7, 0)
 shape = SubResource("CapsuleShape2D_y4r1p")
 disabled = true
 
-[connection signal="area_entered" from="facing_container/hurtbox_standing" to="." method="_on_hurtbox_area_entered"]
+[connection signal="area_entered" from="facing_container/hurtbox_standing" to="." method="_on_hurtbox_standing_area_entered"]
+[connection signal="area_entered" from="facing_container/hurtbox_crouching" to="." method="_on_hurtbox_crouching_area_entered"]
