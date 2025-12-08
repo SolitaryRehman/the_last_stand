@@ -1,306 +1,211 @@
 extends CharacterBody2D
 
+# ============================================================
+# CONSTANTS
+# ============================================================
 const SPEED = 400.0
 const JUMP_VELOCITY = -650.0
 
+const BUFFER_SIZE = 10
+const BUFFER_DURATION = 0.3
+
+# ============================================================
+# ONREADY NODES
+# ============================================================
+@onready var facing_container: Node2D = $facing_container
 @onready var animated_sprite: AnimatedSprite2D = $facing_container/AnimatedSprite2D
 
+# Hurtboxes
 @onready var hurtbox_standing_area: Hurtbox = $facing_container/hurtbox_standing
 @onready var hurtbox_crouching_area: Hurtbox = $facing_container/hurtbox_crouching
 
+# Hitboxes
 @onready var hitbox_punch_area: Hitbox = $facing_container/hitbox_punch
 @onready var hitbox_kick_area: Hitbox = $facing_container/hitbox_kick
 
-
-@onready var facing_container: Node2D = $facing_container
-
+# ============================================================
+# SIGNAL / EXPORT
+# ============================================================
 @export var character_name: String = "Player_2"
+@export var max_health: int = 100
+@export var hitstun_duration := 0.25
+@export var knockdown_duration := 1.0
+@export var damage_amount := 10
 
 signal character_died(character_id: String)
 signal health_changed(new_health: int, character_id: String)
-	
-# ================================
-# PLAYER STATE
-# ================================
+
+# ============================================================
+# STATE VARIABLES
+# ============================================================
+var health: int = max_health
+
+# Attacking
 var current_attack = ""
 var is_attacking = false
 
+# Crouch
 var is_crouching = false
-var crouch_state = "none"  # "none", "down", "idle", "up"
+var crouch_state = "none"   # none / down / idle / up
 
-@export var max_health: int = 100
-var health: int = max_health
-
-var is_stunned: bool = false   # Flag for stun mechanics
-var stun_timer: float = 0.0 # Timer for stun duration
-
+# Stun / Knockdown
+var is_stunned: bool = false
+var stun_timer: float = 0.0
 var is_knocked_down: bool = false
 var knockdown_time: float = 0.0
 
-@export var hitstun_duration := 0.25
-@export var knockdown_duration := 1.0
-
-@export var damage_amount = 10
-
-# ---------- BUFFER STATE --------------- 
-var input_buffer: Array[String] = []
-const BUFFER_SIZE = 10 # Store up to 10 recent inputs
-const BUFFER_DURATION = 0.3 # Inputs expire after 0.3 seconds
-var buffer_timer: float = 0.0
-
+# Blocking
 var is_blocking: bool = false
 var is_blocking_hit = false
-
-var counter_window_timer: Timer = Timer.new() # Add as child node
 var is_counter_window_active: bool = false
 
+# Input buffer
+var input_buffer: Array[String] = []
+var buffer_timer: float = 0.0
 
-# ====== DEFINING COMBO SEQUENCES ======
+# Counter Timer
+var counter_window_timer: Timer = Timer.new()
+
+# ============================================================
+# COMBO DEFINITIONS
+# ============================================================
 const COMBOS = {
-		"punch_punch_kick": ["punch", "punch", "kick"],
-		"kick_punch": ["kick", "punch"],
-		# Will add more combos here later
-	}
+	"punch_punch_kick": ["punch", "punch", "kick"],
+	"kick_punch": ["kick", "punch"]
+}
 
-
+# ============================================================
+# READY
+# ============================================================
 func _ready():
 	animated_sprite.animation_finished.connect(_on_animation_finished)
-	health = max_health
-	
-	# Ensure hitbox is disabled by default
+
+	# Disable hitboxes by default
 	hitbox_punch_area.get_node("CollisionShape2D").disabled = true
 	hitbox_kick_area.get_node("CollisionShape2D").disabled = true
-	
+
 	add_child(counter_window_timer)
 	counter_window_timer.one_shot = true
 	counter_window_timer.timeout.connect(func(): is_counter_window_active = false)
-	
-
 
 # ============================================================
 # MAIN PHYSICS PROCESS
 # ============================================================
 func _physics_process(delta: float) -> void:
-	
-	# ================= HITSTUN ==================
+
+	# -------- STUN --------
 	if is_stunned and not is_knocked_down:
-	
-		stun_timer -= delta
-		
-		# Gradually reduce horizontal knockback (friction)
-		var decel = 400 * delta
-		
-		if velocity.x > 0:
-			velocity.x = max(0, velocity.x - decel)
-		elif velocity.x < 0:
-			velocity.x = min(0, velocity.x + decel)
-			
-		move_and_slide()
-		
-		if stun_timer <= 0:
-			is_stunned = false
-			animated_sprite.play("p2_idle")
-		
+		_handle_stun(delta)
 		return
-	
-	# ================= KNOCKDOWN ==================
+
+	# -------- KNOCKDOWN --------
 	if is_knocked_down:
-		knockdown_time -= delta
-			
-		velocity.x = move_toward(velocity.x, 0, 50)
-		velocity.y += get_gravity().y * delta
-	
-		move_and_slide()
-	
-		if knockdown_time <= 0:
-			is_knocked_down = false
-			animated_sprite.play("getup")
-	
+		_handle_knockdown(delta)
 		return
 
-
+	# -------- ATTACK LOCK --------
 	if is_attacking:
 		_handle_attack_state(delta)
 		return
-	
+
+	# -------- NORMAL STATE --------
 	var crouch_pressed := Input.is_action_pressed("p2_crouch")
-	
+
 	_handle_crouch(crouch_pressed)
 	_handle_movement(delta)
 	_handle_attack_input()
 	_handle_animation()
-	
-	# ========= COMBO SYSTEM STUFF ==========
-	# DOOOOOOOO ITTTTTTTTTTTTTT LATERRRRRRRRRRRRRRR IMPPPPPPPPPPPP
-	
-	# Add new inputs to buffer
-	if Input.is_action_just_pressed("p2_attack_4_simple"):
-		add_input_to_buffer("p2_attack_4_simple")
-	if Input.is_action_just_pressed("p2_attack_4_simple"):
-		add_input_to_buffer("p2_attack_4_simple")
-	if Input.is_action_just_pressed("p2_jump"):
-		add_input_to_buffer("p2_jump")
-		# Add other actions '''''''''' LATER  '''''''''''''''''''''
-	
-	# To clear old inputs from buffer (simple time-based expiry)
-	buffer_timer += delta
-	
-	if buffer_timer >= BUFFER_DURATION:
-		
-		if not input_buffer.is_empty():
-			input_buffer.pop_front() # Remove oldest input
-		
-		buffer_timer = 0.0
-	
-		# Check for combos (call this before handling single inputs to prioritize combos)
+
+	# -------- INPUT BUFFER --------
+	_handle_input_buffer(delta)
 	check_for_combos()
-	
-	# Handle stun timer
-	if is_stunned:
-		stun_timer -= delta
-		
-		if stun_timer <= 0:
-			is_stunned = false
-		else:
-			# If stunned, prevent horizontal movement input from affecting velocity.x
-			# Gravity still applies.
-			
-			velocity.x = 0 
-			
-			move_and_slide()
-			_handle_animation()
-			return # Exit early if stunned
-	
-		move_and_slide()
-		_handle_animation()
-	
-	# Handle block input
+
+	# -------- BLOCK --------
 	_handle_block()
-	
-	
-	# Check for counterattack input during counter window
+
+	# -------- COUNTER ATTACK --------
 	if is_counter_window_active and Input.is_action_just_pressed("p2_attack_4_simple"):
 		
-		print("Counterattack!")
 		if is_crouching:
-			_start_attack("counter_crouch") 
+			_start_attack("counter_crouch_4")
 		else:
-			_start_attack("counter_standing")
-		
+			_start_attack("counter_standing_4")
+
 		is_counter_window_active = false
 		counter_window_timer.stop()
-		# Add counter-specific effects ''' LATER '''(e.g., higher damage, stun)
-
-
-func add_input_to_buffer(action: String):
-	
-	input_buffer.append(action)
-	
-	if input_buffer.size() > BUFFER_SIZE:
-		input_buffer.pop_front() # Keep buffer size limited
-	
-	buffer_timer = 0.0 # Reset timer on new input
-
-
-func check_for_combos():
-	if is_attacking or is_stunned: return # Cannot combo while attacking or stunned
-	
-	for combo_name in COMBOS:
-		var combo_sequence = COMBOS[combo_name]
-		
-		if input_buffer.size() >= combo_sequence.size():
-			
-			# Check if the end of the buffer matches the combo sequence
-			var buffer_slice = input_buffer.slice(input_buffer.size() - combo_sequence.size(), input_buffer.size())
-			
-			if buffer_slice == combo_sequence:
-				
-				print("Combo executed: ", combo_name)
-				perform_combo(combo_name)
-				input_buffer.clear() # Clear buffer after successful combo
-				return # Only execute one combo at a time
-	
-
-
-func perform_combo(combo_name: String):
-	match combo_name:
-		"punch_punch_kick":
-			
-			# Play a specific combo animation or sequence of animations
-			animated_sprite.play("combo_punch_punch_kick")
-			# Enable/disable specific hitboxes for the combo
-		"kick_punch":
-			
-			animated_sprite.play("combo_kick_punch")
-			# ============ WILL ADD MORE COMBOS SOON ===============
-		
-	is_attacking = true # Set attacking flag for the duration of the combo
-	animated_sprite.animation_finished.connect(_on_animation_finished, CONNECT_ONE_SHOT)
-	
-	hitbox_punch_area.get_node("CollisionShape2D").disabled = false # Enable hitbox for combo
-	hitbox_kick_area.get_node("CollisionShape2D").disabled = false # Enable hitbox for combo
-	
 
 # ============================================================
-# ATTACK STATE LOGIC
+# STUN / KNOCKDOWN HANDLERS
+# ============================================================
+func _handle_stun(delta):
+	
+	stun_timer -= delta
+	velocity.x = move_toward(velocity.x, 0, 400 * delta)
+	move_and_slide()
+
+	if stun_timer <= 0:
+		is_stunned = false
+		animated_sprite.play("p2_idle")
+
+func _handle_knockdown(delta):
+	
+	knockdown_time -= delta
+	velocity.x = move_toward(velocity.x, 0, 50)
+	velocity.y += get_gravity().y * delta
+
+	move_and_slide()
+
+	if knockdown_time <= 0:
+		is_knocked_down = false
+		animated_sprite.play("p2_knockdown_get_up")
+
+# ============================================================
+# ATTACK STATE
 # ============================================================
 func _handle_attack_state(delta):
-
 	velocity.x = 0
-
+	
 	if not is_on_floor():
 		velocity.y += get_gravity().y * delta
 	else:
 		velocity.y = 0
-
+	
 	move_and_slide()
 
 # ============================================================
 # CROUCH SYSTEM
 # ============================================================
 func _handle_crouch(crouch_pressed):
-
-	# Start / Hold crouch
+	
+	# Start / Hold Crouch
 	if crouch_pressed and is_on_floor() and not is_attacking:
 
 		if crouch_state == "none":
 			_start_crouch_down()
 			return
-
-		if crouch_state == "down":
-			return
-
+		
 		if crouch_state == "idle":
 			animated_sprite.play("p2_crouch_idle")
 			velocity.x = 0
-			# don't return (allow crouch attacks)
 
-	# Stop crouching
+	# Stop Crouch
 	elif not crouch_pressed and is_crouching and not is_attacking:
 		_start_crouch_up()
 		return
-	
-	# ALWAYS keep crouching hurtbox ON
-	if is_crouching:
-		hurtbox_standing_area.get_node("CollisionShape2D").disabled = true
-		hurtbox_crouching_area.get_node("CollisionShape2D").disabled = false
-	else:
-		hurtbox_standing_area.get_node("CollisionShape2D").disabled = false
-		hurtbox_crouching_area.get_node("CollisionShape2D").disabled = true
-	
 
+	# Manage hurtboxes
+	hurtbox_standing_area.get_node("CollisionShape2D").disabled = is_crouching
+	hurtbox_crouching_area.get_node("CollisionShape2D").disabled = not is_crouching
 
 func _start_crouch_down():
 	
 	crouch_state = "down"
 	is_crouching = true
 	velocity.x = 0
-	
 	animated_sprite.play("p2_crouch_down")
 	
 	hurtbox_standing_area.get_node("CollisionShape2D").disabled = true
 	hurtbox_crouching_area.get_node("CollisionShape2D").disabled = false
-
 
 func _start_crouch_up():
 	
@@ -310,40 +215,36 @@ func _start_crouch_up():
 	hurtbox_standing_area.get_node("CollisionShape2D").disabled = false
 	hurtbox_crouching_area.get_node("CollisionShape2D").disabled = true
 
-
 # ============================================================
 # MOVEMENT SYSTEM
 # ============================================================
 func _handle_movement(delta):
-
-	# gravity
+	
 	if not is_on_floor():
 		velocity += get_gravity() * delta
 
-	# jump
+	# Jump
 	if Input.is_action_just_pressed("p2_jump") and is_on_floor():
 		velocity.y = JUMP_VELOCITY
 
-	# walking
+	# Walk
 	var direction := Input.get_axis("p2_walk_left", "p2_walk_right")
 
-	# flip sprite
-	if direction > 0:
-		facing_container.scale.x = 1
-	elif direction < 0:
-		facing_container.scale.x = -1
+	# Flip
+	if direction != 0:
+		facing_container.scale.x = sign(direction)
 
-	# apply movement
-	if not is_crouching:  # can't walk while crouched
-		if direction:
+	# Apply
+	if is_crouching:
+		velocity.x = 0
+		
+	else:
+		if direction != 0:
 			velocity.x = direction * SPEED
 		else:
 			velocity.x = move_toward(velocity.x, 0, SPEED)
-	else:
-		velocity.x = 0
 
 	move_and_slide()
-
 
 # ============================================================
 # ATTACK INPUT SYSTEM
@@ -355,18 +256,16 @@ func _handle_attack_input():
 
 	var direction := Input.get_axis("p2_walk_left", "p2_walk_right")
 
-	# ----- ATTACK 4 -----
+	# -------- ATTACK 4 --------
 	if Input.is_action_just_pressed("p2_attack_4_simple"):
-		
-		# CROUCH ATTACKS
+
 		if is_crouching:
 			if direction != 0:
 				_start_attack("crouch_side_4")
 			else:
 				_start_attack("crouch_4")
 			return
-		
-		# AIR ATTACKS
+
 		if not is_on_floor():
 			if direction != 0:
 				_start_attack("jump_side_4")
@@ -374,26 +273,22 @@ func _handle_attack_input():
 				_start_attack("jump_4")
 			return
 
-		# SIDE ATTACKS
 		if direction != 0:
 			_start_attack("simple_side_4")
 			return
 
-		# NEUTRAL ATTACK
 		_start_attack("simple_4")
-	
-	# ----- ATTACK 5 -----
+
+	# -------- ATTACK 5 --------
 	if Input.is_action_just_pressed("p2_attack_5_simple"):
-		
-		# CROUCH ATTACKS
+
 		if is_crouching:
 			if direction != 0:
 				_start_attack("crouch_side_5")
 			else:
 				_start_attack("crouch_5")
 			return
-		
-		# AIR ATTACKS
+
 		if not is_on_floor():
 			if direction != 0:
 				_start_attack("jump_side_5")
@@ -401,18 +296,14 @@ func _handle_attack_input():
 				_start_attack("jump_5")
 			return
 
-		# SIDE ATTACKS
 		if direction != 0:
 			_start_attack("simple_side_5")
 			return
 
-		# NEUTRAL ATTACK
 		_start_attack("simple_5")
-	
-
 
 # ============================================================
-# ANIMATION CONTROLLER
+# ANIMATION LOGIC
 # ============================================================
 func _handle_animation():
 
@@ -425,7 +316,7 @@ func _handle_animation():
 			animated_sprite.play("p2_crouch_idle")
 			return
 
-		if crouch_state == "up" or crouch_state == "down":
+		if crouch_state in ["up", "down"]:
 			return
 
 		var direction := Input.get_axis("p2_walk_left", "p2_walk_right")
@@ -434,247 +325,294 @@ func _handle_animation():
 			animated_sprite.play("p2_idle")
 		else:
 			animated_sprite.play("p2_walk")
+
 	else:
 		animated_sprite.play("p2_jump")
 
 # ============================================================
-# ANIMATION FINISHED HANDLER
+# ANIMATION FINISHED
 # ============================================================
 func _on_animation_finished():
 
-	# Attack finished
 	if animated_sprite.animation == current_attack:
 		is_attacking = false
-		
-		hitbox_punch_area.get_node("CollisionShape2D").disabled = true # Disable hitbox
-		hitbox_kick_area.get_node("CollisionShape2D").disabled = true # Disable hitbox
-		
 		current_attack = ""
+
+		hitbox_punch_area.get_node("CollisionShape2D").disabled = true
+		hitbox_kick_area.get_node("CollisionShape2D").disabled = true
 
 		if is_crouching and not Input.is_action_pressed("p2_crouch"):
 			_start_crouch_up()
 		return
 
-	# Crouch Down → Crouch Idle
 	if animated_sprite.animation == "p2_crouch_down":
 		crouch_state = "idle"
 		animated_sprite.play("p2_crouch_idle")
 		return
 
-	# Crouch Up → Standing
 	if animated_sprite.animation == "p2_crouch_up":
 		crouch_state = "none"
 		is_crouching = false
 		animated_sprite.play("p2_idle")
 		return
-	
-	# Finish knockdown getup
+
 	if animated_sprite.animation == "getup":
 		animated_sprite.play("p2_idle")
 		return
 
-	# Finish hit animation (not knockdown)
 	if animated_sprite.animation == "p2_get_hit":
 		if not is_knocked_down:
 			animated_sprite.play("p2_idle")
 		return
 
-
-
 # ============================================================
-# ATTACK START LOGIC
+# ATTACK START
 # ============================================================
 func _start_attack(type):
 
 	is_attacking = true
-	print("Starting attack: ", type)
 
 	match type:
 		"crouch_4":
 			current_attack = "p2_attack_crouch_4_simple"
-			hitbox_punch_area.get_node("CollisionShape2D").disabled = false # enable hitbox
 		"crouch_side_4":
 			current_attack = "p2_attack_crouch_4_side"
-			hitbox_punch_area.get_node("CollisionShape2D").disabled = false # enable hitbox
 		"jump_4":
 			current_attack = "p2_attack_jump_4_simple"
-			hitbox_punch_area.get_node("CollisionShape2D").disabled = false # enable hitbox
 		"jump_side_4":
 			current_attack = "p2_attack_jump_4_side"
-			hitbox_punch_area.get_node("CollisionShape2D").disabled = false # enable hitbox
 		"simple_side_4":
 			current_attack = "p2_attack_4_side"
-			hitbox_punch_area.get_node("CollisionShape2D").disabled = false # enable hitbox
 		"simple_4":
 			current_attack = "p2_attack_4_simple"
-			hitbox_punch_area.get_node("CollisionShape2D").disabled = false # enable hitbox
 		"counter_standing_4":
+
+
 			current_attack = "p2_standing_block_counter"
-			hitbox_punch_area.get_node("CollisionShape2D").disabled = false # enable hitbox
-		"counter_crouch_4":
+		"counter_crouch_4": 
 			current_attack = "p2_crouch_block_counter"
-			hitbox_punch_area.get_node("CollisionShape2D").disabled = false # enable hitbox
-		
-		
+
+
 		"crouch_5":
 			current_attack = "p2_attack_crouch_5_simple"
-			hitbox_kick_area.get_node("CollisionShape2D").disabled = false # enable hitbox
 		"crouch_side_5":
 			current_attack = "p2_attack_crouch_5_side"
-			hitbox_kick_area.get_node("CollisionShape2D").disabled = false # enable hitbox
 		"jump_5":
 			current_attack = "p2_attack_jump_5_simple"
-			hitbox_kick_area.get_node("CollisionShape2D").disabled = false # enable hitbox
 		"jump_side_5":
 			current_attack = "p2_attack_jump_5_side"
-			hitbox_kick_area.get_node("CollisionShape2D").disabled = false # enable hitbox
 		"simple_side_5":
 			current_attack = "p2_attack_5_side"
-			hitbox_kick_area.get_node("CollisionShape2D").disabled = false # enable hitbox
 		"simple_5":
 			current_attack = "p2_attack_5_simple"
-			hitbox_kick_area.get_node("CollisionShape2D").disabled = false # enable hitbox
-		
-		
-	
+
+	# Enable hitbox based on attack type
+	if "4" in type:
+		hitbox_punch_area.get_node("CollisionShape2D").disabled = false
+	if "5" in type:
+		hitbox_kick_area.get_node("CollisionShape2D").disabled = false
+
 	animated_sprite.play(current_attack)
 
-
-
 # ============================================================
-# HIT + DAMAGE SYSTEM
+# DAMAGE SYSTEM
 # ============================================================
-
 func take_damage(amount: int, hit_position: Vector2):
-	
-	if is_knocked_down: 
-		return 
-	
+
+	if is_knocked_down:
+		return
+
 	var final_damage = amount
 	var knockback_force = 400.0
-	var knockback_reduction = 1.0     # default = full knockback
-	var play_getting_hit_animation = true     
+	var knockback_reduction = 1.0
+	var play_get_hit = true
 	var apply_stun = true
-	
+
+	# -------- BLOCKING --------
 	if is_blocking:
-		
-		# Reduce damage by 80% when blocking
-		final_damage = int(amount * 0.2) 
-		
-		# Knockback reduced to 10%
-		knockback_reduction = 0.10
-		
-		# Do NOT play hit animation while blocking
-		play_getting_hit_animation = false
-		
-		# Do NOT stun on block
+		final_damage = int(amount * 0.2)
+		knockback_reduction = 0.1
+		play_get_hit = false
 		apply_stun = false
-		
-		# Open counter window
+
 		is_counter_window_active = true
 		counter_window_timer.start(0.2)
 
-	# ========== APPLY DAMAGE ===========
+	# -------- APPLY DAMAGE --------
 	health -= final_damage
-	
-	# Ensure health doesn't go below 0 or above max_health
 	health = clamp(health, 0, max_health)
-	print("Character took ", amount, " damage. Health: ", health) # For debugging
-	
-	# ADDED an @export var character_name: String = "Player1" to Character.gd
+
 	health_changed.emit(health, character_name)
-	
-	# HORIZONTAL KNOCKBACK OPPOSITE ATTACKER
-	var knockback_direction_difference = global_position.x - hit_position.x
-	var dir = 0
-	
-	if knockback_direction_difference > 0:
-		dir = 1  # attacker left → push right
-	else:
-		dir = -1 # attacker right → push left
-	
+
+	# -------- KNOCKBACK --------
+	var dir = sign(global_position.x - hit_position.x)
 	velocity.x = dir * knockback_force
-	velocity.y = -10       # very small vertical movement
-	
-	print("Hit from ", hit_position.x, " | Player pos ", global_position.x, " | Diff ", knockback_direction_difference, " | Dir ", dir, " | Vel.X ", velocity.x)
-	
-	 # ---- KNOCKDOWN ----
+	velocity.y = -10
+
+	# -------- KNOCKDOWN --------
 	if final_damage >= 25:
 		is_knocked_down = true
 		knockdown_time = knockdown_duration
 		animated_sprite.play("p2_knockdown")
 		return
-	
+
+	# -------- STUN / HIT ANIM --------
 	if apply_stun:
 		is_stunned = true
 		stun_timer = hitstun_duration
 		is_attacking = false
-		
-		if play_getting_hit_animation:
+
+		if play_get_hit:
 			if is_crouching:
 				animated_sprite.play("p2_get_hit_crouch")
 			else:
 				animated_sprite.play("p2_get_hit")
-		
+
+
 	else:
-		# If blocking, return to blocking idle animation
 		if is_crouching:
 			animated_sprite.play("p2_block_crouch")
 		else:
 			animated_sprite.play("p2_block_standing")
-	
-	
-	# Death
+
+
+	# -------- DEATH --------
 	if health <= 0:
 		animated_sprite.play("p2_defeat")
 		emit_signal("character_died", character_name)
 		die()
-	
-
 
 func die():
 	print("PLAYER DEAD")
 
+# ============================================================
+# HITBOX SIGNALS
+# ============================================================
 func _on_hurtbox_standing_area_entered(area: Area2D) -> void:
-	
-	if area.owner == self:
+	if area.owner == self: 
 		return
 	
-	print("HURTBOX HIT BY: ", area.name)
-
-	
-	# We can identify hitboxes by checking their collision layer or by adding them to a group.
-	if area.is_in_group("hitbox_punch"):
+	if area.is_in_group("hitbox_punch"): 
 		_take_punch_hit(area)
 	
-	if area.is_in_group("hitbox_kick"):
+	if area.is_in_group("hitbox_kick"): 
 		_take_kick_hit(area)
-	
-
 
 func _on_hurtbox_crouching_area_entered(area: Area2D) -> void:
-	
-	if area.owner == self:
+	if area.owner == self: 
 		return
 	
-	print("HURTBOX HIT BY: ", area.name)
-
-	# We can identify hitboxes by checking their collision layer or by adding them to a group.
-	if area.is_in_group("hitbox_punch"):
+	if area.is_in_group("hitbox_punch"): 
 		_take_punch_hit(area)
 	
-	if area.is_in_group("hitbox_kick"):
+	if area.is_in_group("hitbox_kick"): 
 		_take_kick_hit(area)
+
+# ============================================================
+# APPLY HIT
+# ============================================================
+func _take_punch_hit(area: Area2D):
 	
+	take_damage(10, area.global_position)
+	is_stunned = true
+	stun_timer = hitstun_duration
+	
+	if is_crouching:
+		animated_sprite.play("p2_get_hit_crouch")
+	else:
+		animated_sprite.play("p2_get_hit")
 
 
-## We can identify hitboxes by checking their collision layer or by adding them to a group.
-	#if area.is_in_group("hitbox") and area.owner != self:
-		#if is_blocking:
-			#take_damage(int(damage_amount), area.global_position) # apply small damage
-			#_on_blocked_hit(area.global_position) # play block animation
-		#else:
-			#take_damage(damage_amount, area.global_position)
+func _take_kick_hit(area: Area2D):
+	
+	take_damage(5, area.global_position)
+	is_knocked_down = true
+	knockdown_time = knockdown_duration
+
+	velocity.y = -200
+	velocity.x = sign(global_position.x - area.global_position.x) * 700
+	animated_sprite.play("p2_knockdown")
+
+# ============================================================
+# INPUT BUFFER SYSTEM
+# ============================================================
+func _handle_input_buffer(delta):
+	buffer_timer += delta
+
+	if Input.is_action_just_pressed("p2_attack_4_simple"):
+		add_input_to_buffer("p2_attack_4_simple")
+	
+	if Input.is_action_just_pressed("p2_jump"):
+		add_input_to_buffer("p2_jump")
+
+	if buffer_timer >= BUFFER_DURATION and not input_buffer.is_empty():
+		input_buffer.pop_front()
+		buffer_timer = 0.0
+
+func add_input_to_buffer(action: String):
+	input_buffer.append(action)
+	
+	if input_buffer.size() > BUFFER_SIZE:
+		input_buffer.pop_front()
+	
+	buffer_timer = 0.0
+
+# ============================================================
+# COMBO SYSTEM
+# ============================================================
+func check_for_combos():
+	if is_attacking or is_stunned:
+		return
+
+	for combo_name in COMBOS:
+		var seq = COMBOS[combo_name]
+
+		if input_buffer.size() >= seq.size():
+			var slice = input_buffer.slice(input_buffer.size() - seq.size(), input_buffer.size())
+
+			if slice == seq:
+				perform_combo(combo_name)
+				input_buffer.clear()
+				return
+
+func perform_combo(combo_name: String):
+
+	match combo_name:
+		"punch_punch_kick":
+			animated_sprite.play("combo_punch_punch_kick")
+		"kick_punch":
+			animated_sprite.play("combo_kick_punch")
+
+	is_attacking = true
+	animated_sprite.animation_finished.connect(_on_animation_finished, CONNECT_ONE_SHOT)
+
+	hitbox_punch_area.get_node("CollisionShape2D").disabled = false
+	hitbox_kick_area.get_node("CollisionShape2D").disabled = false
+
+# ============================================================
+# BLOCK SYSTEM
+# ============================================================
+func _handle_block():
+
+	if Input.is_action_pressed("p2_block_standing") and is_on_floor() and not is_attacking:
+
+		if not is_blocking:
+			is_blocking = true
+
+			if is_crouching: animated_sprite.play("p2_block_crouch_start")
+			else: animated_sprite.play("p2_block_standing_start")
+
+		else:
+			if is_crouching: animated_sprite.play("p2_block_crouch_idle")
+			else: animated_sprite.play("p2_block_standing_idle")
+
+	else:
+		if is_blocking:
+			is_blocking = false
+
+			if is_crouching: animated_sprite.play("p2_block_crouch_release")
+			else: animated_sprite.play("p2_block_standing_release")
+	
 
 
 func reset_stats():
@@ -684,96 +622,3 @@ func reset_stats():
 	is_blocking = false
 	velocity = Vector2.ZERO
 	health_changed.emit(health, character_name)
-
-func _handle_block():
-	
-	if Input.is_action_pressed("p2_block_standing") and is_on_floor() and not is_attacking:
-		
-		if not is_blocking:
-			is_blocking = true
-			
-			if is_crouching:
-				animated_sprite.play("p2_block_crouch_start")
-			else:
-				animated_sprite.play("p2_block_standing_start")
-			
-		else:
-			# Already blocking, maintain idle block
-			if is_crouching:
-				animated_sprite.play("p2_block_crouch_idle")
-			else:
-				animated_sprite.play("p2_block_standing_idle")
-				
-	else:
-		
-		if is_blocking:
-			is_blocking = false
-			
-			if is_crouching:
-				animated_sprite.play("p2_block_crouch_release")
-			else:
-				animated_sprite.play("p2_block_standing_release")
-
-
-
-func _on_blocked_hit(hit_position: Vector2):
-	
-	# Prevent multiple triggers in the same hit
-	if is_blocking_hit:
-		return
-	 
-	is_blocking_hit = true
-	
-	# Play block-hit animation
-	if is_crouching:
-		animated_sprite.play("p2_block_crouch_hit")
-	else:
-		animated_sprite.play("p2_block_standing_hit")
-	
-	# Optional: small knockback for realism
-	var knockback_direction = sign(global_position.x - hit_position.x)
-	velocity.x = knockback_direction * 50  # small push
-	
-	# Open counter window
-	is_counter_window_active = true
-	counter_window_timer.start(0.2)
-	
-	# Return to block idle after animation finishes
-	animated_sprite.animation_finished.connect(func():
-		if is_crouching:
-			animated_sprite.play("p2_block_crouch_idle")
-		else:
-			animated_sprite.play("p2_block_standing_idle")
-		is_blocking_hit = false
-	, CONNECT_ONE_SHOT)
-
-
-func _take_punch_hit(area: Area2D):
-	var punch_damage = 10
-
-	take_damage(punch_damage, area.global_position)
-	
-	# Apply stun only
-	is_stunned = true
-	stun_timer = hitstun_duration
-
-	if is_crouching:
-		animated_sprite.play("p2_get_hit_crouch")
-	else:
-		animated_sprite.play("p2_get_hit")
-	
-
-func _take_kick_hit(area: Area2D):
-	var kick_damage = 5   # higher damage
-	var knockdown_force = 700
-
-	take_damage(kick_damage, area.global_position)
-
-	# KNOCKDOWN
-	is_knocked_down = true
-	knockdown_time = knockdown_duration
-	
-	velocity.y = -200
-	velocity.x = sign(global_position.x - area.global_position.x) * knockdown_force
-	
-	animated_sprite.play("p2_knockdown")
