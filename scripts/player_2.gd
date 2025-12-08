@@ -487,6 +487,7 @@ func _on_animation_finished():
 func _start_attack(type):
 
 	is_attacking = true
+	print("Starting attack: ", type)
 
 	match type:
 		"crouch_4":
@@ -639,6 +640,9 @@ func _on_hurtbox_standing_area_entered(area: Area2D) -> void:
 	if area.owner == self:
 		return
 	
+	print("HURTBOX HIT BY: ", area.name)
+
+	
 	# We can identify hitboxes by checking their collision layer or by adding them to a group.
 	if area.is_in_group("hitbox_punch"):
 		_take_punch_hit(area)
@@ -650,14 +654,27 @@ func _on_hurtbox_standing_area_entered(area: Area2D) -> void:
 
 func _on_hurtbox_crouching_area_entered(area: Area2D) -> void:
 	
-	# We can identify hitboxes by checking their collision layer or by adding them to a group.
-	if area.is_in_group("hitbox") and area.owner != self:
-		if is_blocking:
-			take_damage(int(damage_amount), area.global_position) # apply small damage
-			_on_blocked_hit(area.global_position) # play block animation
-		else:
-			take_damage(damage_amount, area.global_position)
+	if area.owner == self:
+		return
 	
+	print("HURTBOX HIT BY: ", area.name)
+
+	# We can identify hitboxes by checking their collision layer or by adding them to a group.
+	if area.is_in_group("hitbox_punch"):
+		_take_punch_hit(area)
+	
+	if area.is_in_group("hitbox_kick"):
+		_take_kick_hit(area)
+	
+
+
+## We can identify hitboxes by checking their collision layer or by adding them to a group.
+	#if area.is_in_group("hitbox") and area.owner != self:
+		#if is_blocking:
+			#take_damage(int(damage_amount), area.global_position) # apply small damage
+			#_on_blocked_hit(area.global_position) # play block animation
+		#else:
+			#take_damage(damage_amount, area.global_position)
 
 
 func reset_stats():
