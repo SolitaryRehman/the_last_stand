@@ -1,4 +1,4 @@
-[gd_scene load_steps=190 format=3 uid="uid://dxl3bxt4011ss"]
+[gd_scene load_steps=192 format=3 uid="uid://dxl3bxt4011ss"]
 
 [ext_resource type="Texture2D" uid="uid://daqp4pm1j3ttn" path="res://assets/SPRITES/Milan Flare.png" id="1_l6tho"]
 [ext_resource type="Script" uid="uid://b85ggkeoubxwe" path="res://scripts/player_2.gd" id="1_yjax8"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://gnjepfdbi2ha" path="res://scenes/hurtbox.tscn" id="5_0mr0g"]
 [ext_resource type="Script" uid="uid://bhvmj101wvbe8" path="res://scripts/hurtbox.gd" id="5_v7tvf"]
 [ext_resource type="PackedScene" uid="uid://do5r54r2m6711" path="res://scenes/hitbox.tscn" id="6_v7tvf"]
+[ext_resource type="Script" uid="uid://fed4ogu6k1y6" path="res://scripts/hitbox.gd" id="7_povjg"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_l6tho"]
 radius = 18.0
@@ -856,7 +857,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"p2_attack_5_simple",
-"speed": 9.0
+"speed": 11.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -955,7 +956,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"p2_attack_crouch_5_side",
-"speed": 8.0
+"speed": 9.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -1082,6 +1083,9 @@ animations = [{
 "texture": SubResource("AtlasTexture_tctay")
 }, {
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_tctay")
+}, {
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_u5hfd")
 }, {
 "duration": 1.0,
@@ -1092,7 +1096,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"p2_attack_jump_5_side",
-"speed": 7.0
+"speed": 9.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -1108,6 +1112,12 @@ animations = [{
 "texture": SubResource("AtlasTexture_vd8x7")
 }, {
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_vd8x7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vd8x7")
+}, {
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_70bi2")
 }, {
 "duration": 1.0,
@@ -1118,7 +1128,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"p2_attack_jump_5_simple",
-"speed": 7.0
+"speed": 9.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -1533,6 +1543,10 @@ animations = [{
 radius = 23.0
 height = 68.0
 
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_hkoe6"]
+radius = 18.0
+height = 98.0
+
 [node name="player_2" type="CharacterBody2D"]
 position = Vector2(114, -82)
 script = ExtResource("1_yjax8")
@@ -1547,10 +1561,8 @@ shape = SubResource("CapsuleShape2D_l6tho")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="facing_container"]
 position = Vector2(0, -5)
 sprite_frames = SubResource("SpriteFrames_povjg")
-animation = &"p2_attack_4_side"
+animation = &"p2_attack_crouch_5_simple"
 autoplay = "p2_idle"
-frame = 11
-frame_progress = 1.0
 
 [node name="hurtbox_standing" parent="facing_container" node_paths=PackedStringArray("health") instance=ExtResource("5_0mr0g")]
 collision_mask = 2
@@ -1570,14 +1582,24 @@ metadata/_custom_type_script = "uid://bhvmj101wvbe8"
 shape = SubResource("CapsuleShape2D_povjg")
 disabled = true
 
-[node name="hitbox" parent="facing_container" groups=["hitbox"] instance=ExtResource("6_v7tvf")]
+[node name="hitbox_punch" parent="facing_container" groups=["hitbox_punch"] instance=ExtResource("6_v7tvf")]
 position = Vector2(46, -10)
 collision_layer = 2
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="facing_container/hitbox"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="facing_container/hitbox_punch"]
 shape = SubResource("CapsuleShape2D_l6tho")
 disabled = true
 debug_color = Color(0.6948209, 0.48726153, 0.25737125, 0.41960785)
+
+[node name="hitbox_kick" type="Area2D" parent="facing_container" groups=["hitbox_kick"]]
+collision_layer = 2
+script = ExtResource("7_povjg")
+metadata/_custom_type_script = "uid://fed4ogu6k1y6"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="facing_container/hitbox_kick"]
+position = Vector2(51, 7)
+shape = SubResource("CapsuleShape2D_hkoe6")
+disabled = true
 
 [connection signal="health_depleted" from="health_system" to="." method="_on_health_system_health_depleted"]
 [connection signal="area_entered" from="facing_container/hurtbox_standing" to="." method="_on_hurtbox_standing_area_entered"]
