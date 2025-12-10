@@ -1,0 +1,434 @@
+[gd_scene load_steps=13 format=3 uid="uid://4uwio4np04s6"]
+
+[ext_resource type="Script" uid="uid://dtv8tihmna0xn" path="res://scripts/main_menu.gd" id="1_fu7sn"]
+[ext_resource type="Texture2D" uid="uid://c76vmu44ihqbg" path="res://assets/UI stuff/Background/game wallpaper for TLS.jpg" id="2_8ln24"]
+[ext_resource type="FontFile" uid="uid://ditxsxqaxhw6t" path="res://assets/Fonts/Firestor.ttf" id="3_rtw2f"]
+[ext_resource type="Script" uid="uid://cxl2paeq1hs5t" path="res://scripts/audio_control.gd" id="4_glbon"]
+[ext_resource type="Script" uid="uid://b1i1qp3my6eyg" path="res://scripts/fullscreen_control.gd" id="5_nlkkf"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_7vrkn"]
+texture = ExtResource("2_8ln24")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_06t4h"]
+bg_color = Color(2.7365642, 2.3668218, 0.76846355, 1)
+corner_radius_top_left = 25
+corner_radius_top_right = 25
+corner_radius_bottom_right = 25
+corner_radius_bottom_left = 25
+shadow_size = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7vrkn"]
+bg_color = Color(2.1318974, 2.363, 2.084812, 1)
+corner_radius_top_left = 25
+corner_radius_top_right = 25
+corner_radius_bottom_right = 25
+corner_radius_bottom_left = 25
+shadow_size = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fu7sn"]
+bg_color = Color(0.86194545, 0.63065153, 0.2753195, 1)
+corner_radius_top_left = 25
+corner_radius_top_right = 25
+corner_radius_bottom_right = 25
+corner_radius_bottom_left = 25
+shadow_size = 6
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_7vrkn"]
+
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_jix8l"]
+color = Color(1, 1, 1, 1)
+thickness = 6
+
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_glbon"]
+color = Color(0, 0, 0.9411765, 1)
+thickness = 6
+
+[node name="MainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_fu7sn")
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_7vrkn")
+
+[node name="MainButtons" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 68.0
+offset_top = -105.0
+offset_right = 438.0
+offset_bottom = 216.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 12
+
+[node name="Start" type="Button" parent="MainButtons"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0.7176471, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0.6196568, 0.5242412, 0.20242864, 1)
+theme_override_font_sizes/font_size = 41
+theme_override_styles/normal = SubResource("StyleBoxFlat_06t4h")
+theme_override_styles/normal_mirrored = SubResource("StyleBoxFlat_7vrkn")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_fu7sn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_06t4h")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_7vrkn")
+text = "Start Game
+"
+
+[node name="Settings" type="Button" parent="MainButtons"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0.7176471, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0.6196568, 0.5242412, 0.20242864, 1)
+theme_override_font_sizes/font_size = 41
+theme_override_styles/normal = SubResource("StyleBoxFlat_06t4h")
+theme_override_styles/normal_mirrored = SubResource("StyleBoxFlat_7vrkn")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_fu7sn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_06t4h")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_7vrkn")
+text = "Options
+"
+
+[node name="Exit" type="Button" parent="MainButtons"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0.7176471, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0.6196568, 0.5242412, 0.20242864, 1)
+theme_override_font_sizes/font_size = 41
+theme_override_styles/normal = SubResource("StyleBoxFlat_06t4h")
+theme_override_styles/normal_mirrored = SubResource("StyleBoxFlat_7vrkn")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_fu7sn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_06t4h")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_7vrkn")
+text = "Exit"
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -87.0
+offset_top = -289.0
+offset_right = 556.0
+offset_bottom = -140.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_y = 15
+theme_override_fonts/font = ExtResource("3_rtw2f")
+theme_override_font_sizes/font_size = 110
+text = "The Last Stand"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Options" type="Panel" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 11.0
+offset_top = -142.0
+offset_right = 489.0
+offset_bottom = 246.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="Options"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -232.5
+offset_top = -182.0
+offset_right = 230.5
+offset_bottom = -138.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 34
+text = "Options"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Back" type="Button" parent="Options"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -74.5
+offset_top = -69.0
+offset_right = 74.5
+grow_horizontal = 2
+grow_vertical = 0
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0.7176471, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0.6196568, 0.5242412, 0.20242864, 1)
+theme_override_font_sizes/font_size = 41
+theme_override_styles/normal = SubResource("StyleBoxFlat_06t4h")
+theme_override_styles/normal_mirrored = SubResource("StyleBoxFlat_7vrkn")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_fu7sn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_06t4h")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_7vrkn")
+text = "Back"
+
+[node name="audioControl" type="HSlider" parent="Options"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -201.5
+offset_top = -136.5
+offset_right = 201.5
+offset_bottom = -39.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/slider = SubResource("StyleBoxLine_jix8l")
+theme_override_styles/grabber_area = SubResource("StyleBoxLine_glbon")
+theme_override_styles/grabber_area_highlight = SubResource("StyleBoxLine_glbon")
+max_value = 1.0
+step = 0.05
+value = 1.0
+script = ExtResource("4_glbon")
+audio_bus_name = "Music"
+
+[node name="FullscreenControl" type="CheckButton" parent="Options"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -202.5
+offset_top = -63.5
+offset_right = 203.0
+offset_bottom = -22.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 22
+text = "Fullscreen"
+script = ExtResource("5_nlkkf")
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+visible = false
+autoplay = true
+bus = &"Music"
+
+[node name="play" type="Panel" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 13.0
+offset_top = -139.0
+offset_right = 491.0
+offset_bottom = 276.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="storymode" type="Button" parent="play"]
+layout_mode = 0
+offset_left = 53.0
+offset_top = 16.0
+offset_right = 419.0
+offset_bottom = 112.0
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0.7176471, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0.6196568, 0.5242412, 0.20242864, 1)
+theme_override_font_sizes/font_size = 41
+theme_override_styles/normal = SubResource("StyleBoxFlat_06t4h")
+theme_override_styles/normal_mirrored = SubResource("StyleBoxFlat_7vrkn")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_fu7sn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_06t4h")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_7vrkn")
+text = "STORY MODE"
+
+[node name="multiplayermode" type="Button" parent="play"]
+layout_mode = 0
+offset_left = 53.0
+offset_top = 139.0
+offset_right = 419.0
+offset_bottom = 235.0
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0.7176471, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0.6196568, 0.5242412, 0.20242864, 1)
+theme_override_font_sizes/font_size = 41
+theme_override_styles/normal = SubResource("StyleBoxFlat_06t4h")
+theme_override_styles/normal_mirrored = SubResource("StyleBoxFlat_7vrkn")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_fu7sn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_06t4h")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_7vrkn")
+text = "MULTIPLAYER"
+
+[node name="Back" type="Button" parent="play"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -74.5
+offset_top = -69.0
+offset_right = 74.5
+grow_horizontal = 2
+grow_vertical = 0
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0.7176471, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0.6196568, 0.5242412, 0.20242864, 1)
+theme_override_font_sizes/font_size = 41
+theme_override_styles/normal = SubResource("StyleBoxFlat_06t4h")
+theme_override_styles/normal_mirrored = SubResource("StyleBoxFlat_7vrkn")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_fu7sn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_06t4h")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_7vrkn")
+text = "Back"
+
+[node name="MultiplayerOption" type="Panel" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 13.0
+offset_top = -138.0
+offset_right = 491.0
+offset_bottom = 277.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Online Pvp" type="Button" parent="MultiplayerOption"]
+layout_mode = 0
+offset_left = 52.0
+offset_top = 237.0
+offset_right = 418.0
+offset_bottom = 333.0
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0.7176471, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0.6196568, 0.5242412, 0.20242864, 1)
+theme_override_font_sizes/font_size = 41
+theme_override_styles/normal = SubResource("StyleBoxFlat_06t4h")
+theme_override_styles/normal_mirrored = SubResource("StyleBoxFlat_7vrkn")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_fu7sn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_06t4h")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_7vrkn")
+text = "ONLINE PvP"
+
+[node name="Offline Pvp" type="Button" parent="MultiplayerOption"]
+layout_mode = 0
+offset_left = 53.0
+offset_top = 16.0
+offset_right = 419.0
+offset_bottom = 112.0
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0.7176471, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0.6196568, 0.5242412, 0.20242864, 1)
+theme_override_font_sizes/font_size = 41
+theme_override_styles/normal = SubResource("StyleBoxFlat_06t4h")
+theme_override_styles/normal_mirrored = SubResource("StyleBoxFlat_7vrkn")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_fu7sn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_06t4h")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_7vrkn")
+text = "OFFLINE PvP"
+
+[node name="Local_pVp" type="Button" parent="MultiplayerOption"]
+layout_mode = 0
+offset_left = 53.0
+offset_top = 126.0
+offset_right = 419.0
+offset_bottom = 222.0
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0.7176471, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0.6196568, 0.5242412, 0.20242864, 1)
+theme_override_font_sizes/font_size = 41
+theme_override_styles/normal = SubResource("StyleBoxFlat_06t4h")
+theme_override_styles/normal_mirrored = SubResource("StyleBoxFlat_7vrkn")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_fu7sn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_06t4h")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_7vrkn")
+text = "LOCAL PvP"
+
+[node name="Back" type="Button" parent="MultiplayerOption"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -74.5
+offset_top = -69.0
+offset_right = 74.5
+grow_horizontal = 2
+grow_vertical = 0
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0.7176471, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0.6196568, 0.5242412, 0.20242864, 1)
+theme_override_font_sizes/font_size = 41
+theme_override_styles/normal = SubResource("StyleBoxFlat_06t4h")
+theme_override_styles/normal_mirrored = SubResource("StyleBoxFlat_7vrkn")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_fu7sn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_06t4h")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_7vrkn")
+text = "Back"
+
+[connection signal="pressed" from="MainButtons/Start" to="." method="_on_start_pressed"]
+[connection signal="pressed" from="MainButtons/Settings" to="." method="_on_settings_pressed"]
+[connection signal="pressed" from="MainButtons/Exit" to="." method="_on_exit_pressed"]
+[connection signal="pressed" from="Options/Back" to="." method="_on_back_options_pressed"]
+[connection signal="value_changed" from="Options/audioControl" to="Options/audioControl" method="_on_value_changed"]
+[connection signal="toggled" from="Options/FullscreenControl" to="Options/FullscreenControl" method="_on_toggled"]
+[connection signal="pressed" from="play/multiplayermode" to="." method="_on_multiplayermode_pressed"]
+[connection signal="pressed" from="play/Back" to="." method="_on_back_start_pressed"]
+[connection signal="pressed" from="MultiplayerOption/Offline Pvp" to="." method="_on_offline_pvp_pressed"]
+[connection signal="pressed" from="MultiplayerOption/Local_pVp" to="." method="_on_local_p_vp_pressed"]
+[connection signal="pressed" from="MultiplayerOption/Back" to="." method="_on_back_pressed"]

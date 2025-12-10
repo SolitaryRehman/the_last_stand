@@ -1,14 +1,13 @@
-[gd_scene load_steps=14 format=3 uid="uid://bftn3umej2pjo"]
+[gd_scene load_steps=13 format=3 uid="uid://4uwio4np04s6"]
 
-[ext_resource type="Texture2D" uid="uid://dwkyw3tsg02i2" path="res://scenes/dark-and-dramatic-fantasy-background-featuring-sharp-jagged-black-rocks-with-metallic-gold-accents-creating-a-luxurious-and-mystical-atmosphere-perfect-for-game-design-posters-or-digital-art-photo.jpeg" id="1_06t4h"]
-[ext_resource type="Script" uid="uid://dtv8tihmna0xn" path="res://main_menu.gd" id="1_fu7sn"]
-[ext_resource type="FontFile" uid="uid://bov7p1f3tosu7" path="res://Super Crawler.ttf" id="2_7vrkn"]
-[ext_resource type="Script" uid="uid://cxl2paeq1hs5t" path="res://audio_control.gd" id="4_glbon"]
-[ext_resource type="AudioStream" uid="uid://8jnm5ixic4ic" path="res://Game - Sidhu Moose Wala.mp3" id="4_jix8l"]
-[ext_resource type="Script" uid="uid://b1i1qp3my6eyg" path="res://fullscreen_control.gd" id="5_nlkkf"]
+[ext_resource type="Script" uid="uid://dtv8tihmna0xn" path="res://scripts/main_menu.gd" id="1_fu7sn"]
+[ext_resource type="Texture2D" uid="uid://c76vmu44ihqbg" path="res://assets/UI stuff/Background/game wallpaper for TLS.jpg" id="2_8ln24"]
+[ext_resource type="FontFile" uid="uid://ditxsxqaxhw6t" path="res://assets/Fonts/Firestor.ttf" id="3_rtw2f"]
+[ext_resource type="Script" uid="uid://cxl2paeq1hs5t" path="res://scripts/audio_control.gd" id="4_glbon"]
+[ext_resource type="Script" uid="uid://b1i1qp3my6eyg" path="res://scripts/fullscreen_control.gd" id="5_nlkkf"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_7vrkn"]
-texture = ExtResource("1_06t4h")
+texture = ExtResource("2_8ln24")
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_06t4h"]
 bg_color = Color(2.7365642, 2.3668218, 0.76846355, 1)
@@ -69,10 +68,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -185.0
-offset_top = -47.5
-offset_right = 185.0
-offset_bottom = 273.5
+offset_left = 68.0
+offset_top = -105.0
+offset_right = 438.0
+offset_bottom = 216.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 12
@@ -84,7 +83,6 @@ theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
 theme_override_colors/font_pressed_color = Color(0.7176471, 0, 0, 1)
 theme_override_colors/font_hover_color = Color(0.6196568, 0.5242412, 0.20242864, 1)
-theme_override_fonts/font = ExtResource("2_7vrkn")
 theme_override_font_sizes/font_size = 41
 theme_override_styles/normal = SubResource("StyleBoxFlat_06t4h")
 theme_override_styles/normal_mirrored = SubResource("StyleBoxFlat_7vrkn")
@@ -101,7 +99,6 @@ theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
 theme_override_colors/font_pressed_color = Color(0.7176471, 0, 0, 1)
 theme_override_colors/font_hover_color = Color(0.6196568, 0.5242412, 0.20242864, 1)
-theme_override_fonts/font = ExtResource("2_7vrkn")
 theme_override_font_sizes/font_size = 41
 theme_override_styles/normal = SubResource("StyleBoxFlat_06t4h")
 theme_override_styles/normal_mirrored = SubResource("StyleBoxFlat_7vrkn")
@@ -118,7 +115,6 @@ theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
 theme_override_colors/font_pressed_color = Color(0.7176471, 0, 0, 1)
 theme_override_colors/font_hover_color = Color(0.6196568, 0.5242412, 0.20242864, 1)
-theme_override_fonts/font = ExtResource("2_7vrkn")
 theme_override_font_sizes/font_size = 41
 theme_override_styles/normal = SubResource("StyleBoxFlat_06t4h")
 theme_override_styles/normal_mirrored = SubResource("StyleBoxFlat_7vrkn")
@@ -134,17 +130,17 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -267.5
-offset_top = -224.5
-offset_right = 267.5
-offset_bottom = -99.5
+offset_left = -87.0
+offset_top = -289.0
+offset_right = 556.0
+offset_bottom = -140.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_constants/shadow_offset_y = 15
-theme_override_fonts/font = ExtResource("2_7vrkn")
-theme_override_font_sizes/font_size = 76
-text = "Fighting Game"
+theme_override_fonts/font = ExtResource("3_rtw2f")
+theme_override_font_sizes/font_size = 110
+text = "The Last Stand"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -156,10 +152,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -235.0
-offset_top = -105.0
-offset_right = 243.0
-offset_bottom = 283.0
+offset_left = 11.0
+offset_top = -142.0
+offset_right = 489.0
+offset_bottom = 246.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -176,7 +172,6 @@ offset_right = 230.5
 offset_bottom = -138.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_fonts/font = ExtResource("2_7vrkn")
 theme_override_font_sizes/font_size = 34
 text = "Options"
 horizontal_alignment = 1
@@ -199,7 +194,6 @@ theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
 theme_override_colors/font_pressed_color = Color(0.7176471, 0, 0, 1)
 theme_override_colors/font_hover_color = Color(0.6196568, 0.5242412, 0.20242864, 1)
-theme_override_fonts/font = ExtResource("2_7vrkn")
 theme_override_font_sizes/font_size = 41
 theme_override_styles/normal = SubResource("StyleBoxFlat_06t4h")
 theme_override_styles/normal_mirrored = SubResource("StyleBoxFlat_7vrkn")
@@ -248,21 +242,22 @@ text = "Fullscreen"
 script = ExtResource("5_nlkkf")
 
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
-stream = ExtResource("4_jix8l")
+visible = false
 autoplay = true
 bus = &"Music"
 
 [node name="play" type="Panel" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -235.0
-offset_top = -105.0
-offset_right = 243.0
-offset_bottom = 310.0
+offset_left = 13.0
+offset_top = -139.0
+offset_right = 491.0
+offset_bottom = 276.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -277,7 +272,6 @@ theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
 theme_override_colors/font_pressed_color = Color(0.7176471, 0, 0, 1)
 theme_override_colors/font_hover_color = Color(0.6196568, 0.5242412, 0.20242864, 1)
-theme_override_fonts/font = ExtResource("2_7vrkn")
 theme_override_font_sizes/font_size = 41
 theme_override_styles/normal = SubResource("StyleBoxFlat_06t4h")
 theme_override_styles/normal_mirrored = SubResource("StyleBoxFlat_7vrkn")
@@ -297,7 +291,6 @@ theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
 theme_override_colors/font_pressed_color = Color(0.7176471, 0, 0, 1)
 theme_override_colors/font_hover_color = Color(0.6196568, 0.5242412, 0.20242864, 1)
-theme_override_fonts/font = ExtResource("2_7vrkn")
 theme_override_font_sizes/font_size = 41
 theme_override_styles/normal = SubResource("StyleBoxFlat_06t4h")
 theme_override_styles/normal_mirrored = SubResource("StyleBoxFlat_7vrkn")
@@ -323,7 +316,6 @@ theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
 theme_override_colors/font_pressed_color = Color(0.7176471, 0, 0, 1)
 theme_override_colors/font_hover_color = Color(0.6196568, 0.5242412, 0.20242864, 1)
-theme_override_fonts/font = ExtResource("2_7vrkn")
 theme_override_font_sizes/font_size = 41
 theme_override_styles/normal = SubResource("StyleBoxFlat_06t4h")
 theme_override_styles/normal_mirrored = SubResource("StyleBoxFlat_7vrkn")
@@ -340,10 +332,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -235.0
-offset_top = -105.0
-offset_right = 243.0
-offset_bottom = 310.0
+offset_left = 13.0
+offset_top = -138.0
+offset_right = 491.0
+offset_bottom = 277.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -358,7 +350,6 @@ theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
 theme_override_colors/font_pressed_color = Color(0.7176471, 0, 0, 1)
 theme_override_colors/font_hover_color = Color(0.6196568, 0.5242412, 0.20242864, 1)
-theme_override_fonts/font = ExtResource("2_7vrkn")
 theme_override_font_sizes/font_size = 41
 theme_override_styles/normal = SubResource("StyleBoxFlat_06t4h")
 theme_override_styles/normal_mirrored = SubResource("StyleBoxFlat_7vrkn")
@@ -378,7 +369,6 @@ theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
 theme_override_colors/font_pressed_color = Color(0.7176471, 0, 0, 1)
 theme_override_colors/font_hover_color = Color(0.6196568, 0.5242412, 0.20242864, 1)
-theme_override_fonts/font = ExtResource("2_7vrkn")
 theme_override_font_sizes/font_size = 41
 theme_override_styles/normal = SubResource("StyleBoxFlat_06t4h")
 theme_override_styles/normal_mirrored = SubResource("StyleBoxFlat_7vrkn")
@@ -398,7 +388,6 @@ theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
 theme_override_colors/font_pressed_color = Color(0.7176471, 0, 0, 1)
 theme_override_colors/font_hover_color = Color(0.6196568, 0.5242412, 0.20242864, 1)
-theme_override_fonts/font = ExtResource("2_7vrkn")
 theme_override_font_sizes/font_size = 41
 theme_override_styles/normal = SubResource("StyleBoxFlat_06t4h")
 theme_override_styles/normal_mirrored = SubResource("StyleBoxFlat_7vrkn")
@@ -424,7 +413,6 @@ theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
 theme_override_colors/font_pressed_color = Color(0.7176471, 0, 0, 1)
 theme_override_colors/font_hover_color = Color(0.6196568, 0.5242412, 0.20242864, 1)
-theme_override_fonts/font = ExtResource("2_7vrkn")
 theme_override_font_sizes/font_size = 41
 theme_override_styles/normal = SubResource("StyleBoxFlat_06t4h")
 theme_override_styles/normal_mirrored = SubResource("StyleBoxFlat_7vrkn")
