@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://5nbkmh4uaal2"]
+[gd_scene load_steps=5 format=3 uid="uid://5nbkmh4uaal2"]
 
-[ext_resource type="Script" uid="uid://ir5b5ia3l0wl" path="res://scenes/character_select.gd" id="1_jgus3"]
-[ext_resource type="Texture2D" uid="uid://cf3acei12geoq" path="res://icon.svg" id="2_bow2h"]
-[ext_resource type="FontFile" uid="uid://bov7p1f3tosu7" path="res://Super Crawler.ttf" id="2_uxcyu"]
+[ext_resource type="Script" uid="uid://ir5b5ia3l0wl" path="res://scripts/character_select.gd" id="1_jgus3"]
+[ext_resource type="Texture2D" uid="uid://cavlkxfvaqinw" path="res://assets/SPRITES/DeathAdder art 1.png" id="2_bow2h"]
+[ext_resource type="FontFile" uid="uid://bitgycu4ph68m" path="res://assets/Fonts/Cybrpnuk2.ttf" id="2_fa52j"]
+[ext_resource type="Texture2D" uid="uid://c64nbnvavflg" path="res://assets/SPRITES/Milan Flare Gemini 1.png" id="2_uxcyu"]
 
 [node name="CharacterSelect" type="Control"]
 layout_mode = 3
@@ -40,7 +41,7 @@ layout_mode = 2
 
 [node name="TitleLabel" type="Label" parent="Panel/CenterBox/MainVbox"]
 layout_mode = 2
-theme_override_fonts/font = ExtResource("2_uxcyu")
+theme_override_fonts/font = ExtResource("2_fa52j")
 theme_override_font_sizes/font_size = 23
 text = "SELECT CHARACTER"
 horizontal_alignment = 1
@@ -50,17 +51,24 @@ layout_mode = 2
 columns = 2
 
 [node name="Char1" type="TextureButton" parent="Panel/CenterBox/MainVbox/CharacterGrid"]
+custom_minimum_size = Vector2(200, 200)
 layout_mode = 2
 texture_normal = ExtResource("2_bow2h")
+ignore_texture_size = true
+stretch_mode = 0
 metadata/character_path = "res://scenes/player1.tscn"
 
 [node name="Char2" type="TextureButton" parent="Panel/CenterBox/MainVbox/CharacterGrid"]
+custom_minimum_size = Vector2(200, 200)
 layout_mode = 2
-texture_normal = ExtResource("2_bow2h")
+texture_normal = ExtResource("2_uxcyu")
+ignore_texture_size = true
+stretch_mode = 0
 metadata/character_path = "res://scenes/player1.tscn"
 
 [node name="StatusLabel" type="Label" parent="Panel/CenterBox/MainVbox"]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("2_fa52j")
 text = "Player 1: Choose Your Fighter"
 horizontal_alignment = 1
 
@@ -69,12 +77,14 @@ layout_mode = 2
 
 [node name="Backbutton" type="Button" parent="Panel/CenterBox/MainVbox/BottomButtons"]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("2_fa52j")
 text = "Back"
 
 [node name="Startbutton" type="Button" parent="Panel/CenterBox/MainVbox/BottomButtons"]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("2_fa52j")
 disabled = true
-text = "Choose map"
+text = "Start Match"
 
 [connection signal="pressed" from="Panel/CenterBox/MainVbox/BottomButtons/Backbutton" to="." method="_on_backbutton_pressed"]
 [connection signal="pressed" from="Panel/CenterBox/MainVbox/BottomButtons/Startbutton" to="." method="_on_choose_map_pressed"]

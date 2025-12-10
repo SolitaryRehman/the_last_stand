@@ -11,7 +11,7 @@ extends Control
 var selecting_player := 1  # 1 -> p1, 2 -> p2, 0 -> done
 # Preload the MapSelect scene
 # Preload your Map scene
-#@onready var MapScene = preload("res://Project_B_Content/scenes/game_1.tscn")  # change path to your actual Map scene
+@onready var MapScene = preload("res://scenes/game_1.tscn")  # change path to your actual Map scene
 
 
 
@@ -41,10 +41,6 @@ func _on_character_pressed(btn):
 		# optional: visual feedback
 		btn.modulate = Color(0.8,0.8,1)  # slight tint to indicate locked
 	elif selecting_player == 2:
-		# optionally prevent choosing same char twice
-		if char_path == GameManager.p1_character_path:
-			status_label.text = "Character already chosen by Player 1!"
-			return
 		GameManager.p2_character_path = char_path
 		status_label.text = "Both players ready!"
 		startbutton.disabled = false
@@ -60,7 +56,7 @@ func _on_start_pressed():
 	#get_tree().change_scene_to_file("res://scenes/map1.tscn")
 	## Create an instance of the Map scene
 	#var map_instance = MapScene.instantiate()
-	get_tree().change_scene_to_file("res://Project_B_Content/scenes/game_1.tscn")
+	get_tree().change_scene_to_file("res://scenes/game_1.tscn")
 	# Set it as the current scene
 	#get_tree().current_scene = map_instance
 
