@@ -953,7 +953,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"p1_attack_k_side",
-"speed": 7.0
+"speed": 9.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -1365,7 +1365,7 @@ height = 22.0
 [node name="player_1" type="CharacterBody2D"]
 z_index = 5
 position = Vector2(39, -18)
-collision_mask = 7
+scale = Vector2(0.98180234, 1)
 script = ExtResource("1_g2els")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -1418,7 +1418,7 @@ script = ExtResource("7_smehm")
 metadata/_custom_type_script = "uid://fed4ogu6k1y6"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="facing_container/hitbox_kick"]
-position = Vector2(7, 0)
+position = Vector2(12, 0)
 shape = SubResource("CapsuleShape2D_y4r1p")
 disabled = true
 

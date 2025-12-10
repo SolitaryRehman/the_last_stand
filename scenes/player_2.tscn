@@ -1405,7 +1405,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"p2_jump",
-"speed": 8.0
+"speed": 6.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -1561,8 +1561,10 @@ shape = SubResource("CapsuleShape2D_l6tho")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="facing_container"]
 position = Vector2(0, -5)
 sprite_frames = SubResource("SpriteFrames_povjg")
-animation = &"p2_knockdown_get_up"
+animation = &"p2_jump"
 autoplay = "p2_idle"
+frame = 6
+frame_progress = 1.0
 
 [node name="hurtbox_standing" parent="facing_container" node_paths=PackedStringArray("health") instance=ExtResource("5_0mr0g")]
 collision_mask = 2

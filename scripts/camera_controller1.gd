@@ -6,8 +6,8 @@ extends Node2D
 @onready var camera_2d: Camera2D = $Camera2D
 
 
-@export var zoom_in := 1.25    # when players are close
-@export var zoom_out := 0.7   # when players are far
+@export var zoom_in := 0.6    # when players are close
+@export var zoom_out := 0.325   # when players are far
 
 
 

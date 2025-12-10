@@ -1,47 +1,22 @@
-[gd_scene load_steps=6 format=3 uid="uid://db6xwa4mcvo1x"]
+[gd_scene load_steps=4 format=3 uid="uid://db6xwa4mcvo1x"]
 
 [ext_resource type="Script" uid="uid://tpqflu14tsva" path="res://scripts/health_bar.gd" id="1_1bvlm"]
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_iwqyq"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_y3kqx"]
+bg_color = Color(0.13319641, 0.13319641, 0.13319635, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1bvlm"]
 bg_color = Color(0.081325926, 0.50416243, 0.4905969, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_y3kqx"]
-bg_color = Color(0.16206557, 0.1620656, 0.16206548, 1)
-expand_margin_left = 1.0
-expand_margin_top = 1.0
-expand_margin_right = 1.0
-expand_margin_bottom = 1.0
-shadow_color = Color(0.4392157, 0.4392157, 0.4392157, 0.3764706)
-shadow_offset = Vector2(0, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6opq1"]
-bg_color = Color(1, 1, 1, 1)
 
 [node name="health bar" type="ProgressBar"]
 z_index = 10
 offset_right = 420.0
 offset_bottom = 24.0
-theme_override_styles/background = SubResource("StyleBoxEmpty_iwqyq")
+theme_override_styles/background = SubResource("StyleBoxFlat_y3kqx")
 theme_override_styles/fill = SubResource("StyleBoxFlat_1bvlm")
 value = 60.0
 show_percentage = false
 script = ExtResource("1_1bvlm")
-
-[node name="damage bar" type="ProgressBar" parent="."]
-z_index = -1
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_styles/background = SubResource("StyleBoxFlat_y3kqx")
-theme_override_styles/fill = SubResource("StyleBoxFlat_6opq1")
-value = 80.0
-fill_mode = 1
-show_percentage = false
 
 [node name="Timer" type="Timer" parent="."]
 wait_time = 0.4

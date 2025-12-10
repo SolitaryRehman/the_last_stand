@@ -3,8 +3,8 @@ extends CharacterBody2D
 # ============================================================
 # CONSTANTS
 # ============================================================
-const SPEED = 400.0
-const JUMP_VELOCITY = -650.0
+const SPEED = 800.0
+const JUMP_VELOCITY = -950.0
 
 const BUFFER_SIZE = 10
 const BUFFER_DURATION = 0.3
@@ -221,7 +221,11 @@ func _start_crouch_up():
 # ============================================================
 func _handle_movement(delta):
 	if not is_on_floor():
-		velocity += get_gravity() * delta
+		# Faster fall when going downward
+		if velocity.y > 0:
+			velocity.y += get_gravity().y * 3 * delta 
+		else:
+			velocity.y += get_gravity().y * delta
 
 	# Jump
 	if Input.is_action_just_pressed("p1_jump") and is_on_floor():
@@ -427,14 +431,12 @@ func take_damage(amount: int, hit_position: Vector2):
 
 	var final_damage = amount
 	var knockback_force = 300.0
-	var knockback_reduction = 1.0
 	var play_get_hit = true
 	var apply_stun = true
 
 	# -------- BLOCKING --------
 	if is_blocking:
 		final_damage = int(amount * 0.2)
-		knockback_reduction = 0.1
 		play_get_hit = false
 		apply_stun = false
 
@@ -598,7 +600,7 @@ func perform_combo(combo_name: String):
 func _handle_block():
 
 	if Input.is_action_pressed("p1_block_standing") and is_on_floor() and not is_attacking:
-
+	
 		if not is_blocking:
 			is_blocking = true
 

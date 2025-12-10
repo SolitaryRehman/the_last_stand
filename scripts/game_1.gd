@@ -12,7 +12,6 @@ extends Node2D
 @onready var round_timer: Timer = $round_timer
 
 @onready var victory_screen :Panel = $UI/victory_screen
-@onready var victory_label :Label = $UI/victory_screen/victory_label
 @onready var restart_button :Button = $UI/victory_screen/restart_button
 
 
@@ -22,6 +21,8 @@ var current_state = State.IDLE
 var rounds_won_p1: int = 0
 var rounds_won_p2: int = 0
 const MAX_ROUNDS = 3
+
+@export var speed = 0.1
 
 
 # Called when the node enters the scene tree for the first time.
@@ -41,10 +42,13 @@ func _ready() -> void:
 	start_match()
 	
 	restart_button.pressed.connect(on_restart_button_pressed)
+	
+	victory_screen.visible = false
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	
 	if current_state == State.FIGHT:
 		round_timer_label.text = str(int(round_timer.time_left))
 
@@ -57,6 +61,7 @@ func on_player_health_changed(new_health: int, character_id: String):
 		health_bar_player_2.value = new_health
 	
 
+
 func start_match():
 	
 	current_state = State.INTRO
@@ -65,8 +70,8 @@ func start_match():
 
 	# Use a Tween to animate players into position
 	var tween = create_tween()
-	tween.tween_property(player_1, "position:x", 200, 1.0).from(-200) # Animate from off-screen
-	tween.tween_property(player_2, "position:x", 1080, 1.0).from(1480)
+	tween.tween_property(player_1, "position:x", 1701.0, 1.0).from(1701.0) # Animate from off-screen
+	tween.tween_property(player_2, "position:x", 2127.0, 1.0).from(2127.0)
 
 		# After the intro animation, start the fight
 	tween.tween_callback(start_fight)
@@ -95,10 +100,10 @@ func end_round():
 
 	if player_1.health > player_2.health:
 		rounds_won_p1 += 1
-		match_state_msgs.text = "Player 1 Wins Round!"
+		match_state_msgs.text = "Geralt Wins Round!"
 	elif player_2.health > player_1.health:
 		rounds_won_p2 += 1
-		match_state_msgs.text = "Player 2 Wins Round!"
+		match_state_msgs.text = "Ciri Wins Round!"
 	else:
 		match_state_msgs.text = "Draw!"
 
@@ -116,8 +121,8 @@ func reset_round():
 		# Reset player health, energy, position
 	player_1.reset_stats()
 	player_2.reset_stats()
-	player_1.position = Vector2(200, 500)
-	player_2.position = Vector2(1080, 500)
+	player_1.position = Vector2(1701.0, -446.0)
+	player_2.position = Vector2(2127.0, -430.0)
 	player_1.show()
 	player_2.show()
 
@@ -129,10 +134,16 @@ func end_match():
 	current_state = State.MATCH_END
 	victory_screen.visible = true
 
-	if rounds_won_p1 > rounds_won_p2:
-		victory_label.text = "Player 1 Wins!"
-	else:
-		victory_label.text = "Player 2 Wins!"
+	restart_button.visible = true
+	
+	var tween = create_tween()
+	victory_screen.modulate = Color(1, 1, 1, 0)  # fade in from transparent
+	tween.tween_property(victory_screen, "modulate:a", 1.0, 0.8)
+
+	#if rounds_won_p1 > rounds_won_p2:
+		#victory_label.text = "Geralt Wins!"
+	#else:
+		#victory_label.text = "Ciri Wins!"
 
 
 func on_restart_button_pressed():

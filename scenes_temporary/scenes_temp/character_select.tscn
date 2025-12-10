@@ -1,0 +1,80 @@
+[gd_scene load_steps=4 format=3 uid="uid://qrpsxukcoemr"]
+
+[ext_resource type="Script" uid="uid://ir5b5ia3l0wl" path="res://scenes/character_select.gd" id="1_jgus3"]
+[ext_resource type="Texture2D" uid="uid://cf3acei12geoq" path="res://icon.svg" id="2_bow2h"]
+[ext_resource type="FontFile" uid="uid://bov7p1f3tosu7" path="res://Super Crawler.ttf" id="2_uxcyu"]
+
+[node name="CharacterSelect" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_jgus3")
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CenterBox" type="MarginContainer" parent="Panel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MainVbox" type="VBoxContainer" parent="Panel/CenterBox"]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="Panel/CenterBox/MainVbox"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_uxcyu")
+theme_override_font_sizes/font_size = 23
+text = "SELECT CHARACTER"
+horizontal_alignment = 1
+
+[node name="CharacterGrid" type="GridContainer" parent="Panel/CenterBox/MainVbox"]
+layout_mode = 2
+columns = 2
+
+[node name="Char1" type="TextureButton" parent="Panel/CenterBox/MainVbox/CharacterGrid"]
+layout_mode = 2
+texture_normal = ExtResource("2_bow2h")
+metadata/character_path = "res://scenes/player1.tscn"
+
+[node name="Char2" type="TextureButton" parent="Panel/CenterBox/MainVbox/CharacterGrid"]
+layout_mode = 2
+texture_normal = ExtResource("2_bow2h")
+metadata/character_path = "res://scenes/player1.tscn"
+
+[node name="StatusLabel" type="Label" parent="Panel/CenterBox/MainVbox"]
+layout_mode = 2
+text = "Player 1: Choose Your Fighter"
+horizontal_alignment = 1
+
+[node name="BottomButtons" type="HBoxContainer" parent="Panel/CenterBox/MainVbox"]
+layout_mode = 2
+
+[node name="Backbutton" type="Button" parent="Panel/CenterBox/MainVbox/BottomButtons"]
+layout_mode = 2
+text = "Back"
+
+[node name="Startbutton" type="Button" parent="Panel/CenterBox/MainVbox/BottomButtons"]
+layout_mode = 2
+disabled = true
+text = "Choose map"
+
+[connection signal="pressed" from="Panel/CenterBox/MainVbox/BottomButtons/Backbutton" to="." method="_on_backbutton_pressed"]
+[connection signal="pressed" from="Panel/CenterBox/MainVbox/BottomButtons/Startbutton" to="." method="_on_choose_map_pressed"]

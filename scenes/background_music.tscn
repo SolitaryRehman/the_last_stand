@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://du7vaoc6hv8vr"]
 
-[ext_resource type="AudioStream" uid="uid://b7ea3wmiawt7u" path="res://assets/Musics/minecraft-background-music-1.mp3" id="1_0rulj"]
+[ext_resource type="AudioStream" uid="uid://18tap8g3xlhk" path="res://assets/Naruto - Orochimaru Theme (Guitar Trap Remix) [ZDLD24W06V4].mp3" id="1_0rulj"]
 
 [node name="background music" type="AudioStreamPlayer2D"]
 stream = ExtResource("1_0rulj")

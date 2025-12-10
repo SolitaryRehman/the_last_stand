@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://18tap8g3xlhk"
+path="res://.godot/imported/Naruto - Orochimaru Theme (Guitar Trap Remix) [ZDLD24W06V4].mp3-ff0ff0ae0be1084932b0353a2498484e.mp3str"
+
+[deps]
+
+source_file="res://assets/Naruto - Orochimaru Theme (Guitar Trap Remix) [ZDLD24W06V4].mp3"
+dest_files=["res://.godot/imported/Naruto - Orochimaru Theme (Guitar Trap Remix) [ZDLD24W06V4].mp3-ff0ff0ae0be1084932b0353a2498484e.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4
