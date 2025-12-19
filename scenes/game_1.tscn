@@ -118,7 +118,7 @@ texture = ExtResource("8_prawa")
 sources/0 = SubResource("TileSetAtlasSource_2p4cb")
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_prawa"]
-size = Vector2(257, 677)
+size = Vector2(238, 677)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_a1lbx"]
 size = Vector2(285, 924)
@@ -275,11 +275,11 @@ position = Vector2(1483, -352)
 script = ExtResource("10_fxokx")
 
 [node name="Camera2D" type="Camera2D" parent="camera_controller"]
-position = Vector2(274, -107)
-scale = Vector2(1.2301453, 4.3157477)
+position = Vector2(283, -107)
+scale = Vector2(5439.1646, 2.31228)
 zoom = Vector2(0.325, 0.325)
-limit_left = -8387
-limit_right = 11742
+limit_left = -10000
+limit_right = 9500
 limit_bottom = 1
 
 [node name="round_timer" type="Timer" parent="."]
@@ -332,17 +332,17 @@ tile_set = SubResource("TileSet_155u1")
 position = Vector2(0, 121)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="world_boundary_right"]
-position = Vector2(11741.5, -724.5)
+position = Vector2(11413, -724.5)
 shape = SubResource("RectangleShape2D_prawa")
 
 [node name="world_boundary_left" type="StaticBody2D" parent="."]
 position = Vector2(0, 283)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="world_boundary_left"]
-position = Vector2(-8387.5, -1015)
+position = Vector2(-8060, -1015)
 shape = SubResource("RectangleShape2D_a1lbx")
 
-[connection signal="health_changed" from="player_2" to="." method="_on_player_health_changed"]
 [connection signal="health_changed" from="player_2" to="." method="_on_player_2_health_changed"]
+[connection signal="health_changed" from="player_2" to="." method="_on_player_health_changed"]
 [connection signal="timeout" from="round_timer" to="." method="_on_timer_timeout"]
 [connection signal="timeout" from="round_timer" to="." method="_on_round_timer_timeout"]

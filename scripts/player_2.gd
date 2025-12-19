@@ -426,7 +426,7 @@ func take_damage(amount: int, hit_position: Vector2):
 		return
 
 	var final_damage = amount
-	var knockback_force = 400.0
+	var knockback_force = 900.0
 	var play_get_hit = true
 	var apply_stun = true
 
@@ -531,7 +531,7 @@ func _take_kick_hit(area: Area2D):
 	knockdown_time = knockdown_duration
 
 	velocity.y = -200
-	velocity.x = sign(global_position.x - area.global_position.x) * 700
+	velocity.x = sign(global_position.x - area.global_position.x) * 1500
 	animated_sprite.play("p2_knockdown")
 
 # ============================================================
