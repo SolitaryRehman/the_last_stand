@@ -1,3 +1,4 @@
 # Godot 4+ specific ignores
 .godot/
 /android/
+"Executable file to RUN the GAME/*.exe" 
