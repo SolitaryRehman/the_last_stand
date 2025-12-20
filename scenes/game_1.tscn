@@ -342,7 +342,7 @@ position = Vector2(0, 283)
 position = Vector2(-8060, -1015)
 shape = SubResource("RectangleShape2D_a1lbx")
 
-[connection signal="health_changed" from="player_2" to="." method="_on_player_2_health_changed"]
 [connection signal="health_changed" from="player_2" to="." method="_on_player_health_changed"]
+[connection signal="health_changed" from="player_2" to="." method="_on_player_2_health_changed"]
 [connection signal="timeout" from="round_timer" to="." method="_on_timer_timeout"]
 [connection signal="timeout" from="round_timer" to="." method="_on_round_timer_timeout"]
